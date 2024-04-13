@@ -2,6 +2,9 @@
 require 'optparse'
 require 'date'
 
+TargetMonthMargin = 15 # 表示対象の月・年表示の余白
+DateMargin = 2 #カレンダーのDate間の余白
+
 options = {}
 
 # コマンドライン引数-m、-yで指定された値を月、年に代入する 
@@ -14,7 +17,7 @@ options[:month] ||= Date.today.month
 options[:year] ||= Date.today.year
 
 # 指定された月、年のカレンダーを表示する
-puts "#{options[:month]}月 #{options[:year]}年".rjust(15)
+puts "#{options[:month]}月 #{options[:year]}年".rjust(TargetMonthMargin)
 puts '日 月 火 水 木 金 土'
 # 指定された月の初日を取得する
 first_day = Date.new(options[:year], options[:month], 1)
@@ -27,7 +30,7 @@ print '   ' * first_day.wday
 
 # カレンダーの日付を表示する
 (first_day..last_day).each do |date|
-  print date.day.to_s.rjust(2)
+  print date.day.to_s.rjust(DateMargin)
   print ' '
   # 日曜日の場合は改行する
   puts if date.saturday?
