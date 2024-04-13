@@ -32,9 +32,9 @@ print '   ' * first_day.wday
 (first_day..last_day).each do |date|
   print date.day.to_s.rjust(DateMargin)
   print ' '
-  # 日曜日の場合は改行する
-  puts if date.saturday?
+  # 土曜日の場合は改行する。ただし最終日が土曜日だった場合は改行しない
+  puts if date.saturday? && date != last_day
 end
 
-# calコマンドと同等の表示になるよう最後に改行を表示
-puts
+# カレンダーの最後の後に改行する
+puts "\n\n"
