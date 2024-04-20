@@ -1,41 +1,28 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'optparse'
 require 'date'
 
-TargetMonthMargin = 15 # 表示対象の月・年表示の余白
-DateMargin = 2 #カレンダーのDate間の余白
+TARGET_MONTH_BLANK_SPACE = 15
+DATE_BLANK_SPACE = 2
 
 options = {}
 
-# コマンドライン引数-m、-yで指定された値を月、年に代入する 
-opt = ARGV.getopts('m:','y:')
+opt = ARGV.getopts('m:', 'y:')
 options[:month] = opt['m'].to_i if opt['m']
 options[:year] = opt['y'].to_i if opt['y']
+options[:month] = opt['m']&.to_i || Date.today.month
+options[:year] = opt['y']&.to_i || Date.today.year
 
-# 引数が未指定だった場合、今月、今年を代入する
-options[:month] ||= Date.today.month
-options[:year] ||= Date.today.year
-
-# 指定された月、年のカレンダーを表示する
-puts "#{options[:month]}月 #{options[:year]}年".rjust(TargetMonthMargin)
+puts "#{options[:month]}月 #{options[:year]}年".rjust(TARGET_MONTH_BLANK_SPACE)
 puts '日 月 火 水 木 金 土'
-
-# 指定された月の初日を取得する
-first_day = Date.new(options[:year], options[:month], 1)
-
-# 指定された月の最終日を取得する
-last_day = Date.new(options[:year], options[:month], -1)
-
-# 初日の曜日に応じて空白を表示する
-print '   ' * first_day.wday
-
-# カレンダーの日付を表示する
-(first_day..last_day).each do |date|
-  print date.day.to_s.rjust(DateMargin)
+first_date = Date.new(options[:year], options[:month], 1)
+last_date = Date.new(options[:year], options[:month], -1)
+print '   ' * first_date.wday
+(first_date..last_date).each do |date|
+  print date.day.to_s.rjust(DATE_BLANK_SPACE)
   print ' '
-  # 土曜日の場合は改行する。ただし最終日が土曜日だった場合は改行しない
-  puts if date.saturday? && date != last_day
+  puts if date.saturday? && date != last_date
 end
-
-# カレンダーの最後の後に改行する
 puts "\n\n"
