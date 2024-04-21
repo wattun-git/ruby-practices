@@ -9,7 +9,7 @@ def strike?(frame)
 end
 
 def spare?(frame)
-  frame[0] + frame[1] == MAX_KNOCKED_DOWN_PIN
+  frame[0] + frame[1] == MAX_KNOCKED_DOWN_PIN && !strike?(frame)
 end
 
 score = ARGV[0]
@@ -17,32 +17,28 @@ scores = score.split(',')
 
 shots = []
 scores.each do |s|
-  if s == 'X'
-    shots << MAX_KNOCKED_DOWN_PIN
-    shots << 0
-  else
-    shots << s.to_i
+  shots << if s == 'X'
+             MAX_KNOCKED_DOWN_PIN
+           else
+             s.to_i
+           end
+end
+
+frames =
+  Array.new(10) do |i|
+    if i == LAST_FRAME_NUMBER - 1
+      shots.slice!(0..-1)
+    elsif strike?(shots[0..1])
+      ary = []
+      ary << shots.slice!(0) # 配列として返すようにaryに追加
+    else
+      shots.slice!(0..1)
+    end
   end
-end
-
-frames = []
-shots.each_slice(2) do |shot|
-  frames << shot
-end
-
-frames.each do |frame|
-  frame.pop if strike?(frame)
-end
-
-if frames.size > LAST_FRAME_NUMBER
-  frames[LAST_FRAME_NUMBER - 1] += frames[LAST_FRAME_NUMBER..].flatten
-  frames.slice!(LAST_FRAME_NUMBER..-1)
-end
 
 point = 0
 frames.each_with_index do |frame, index|
   next_frame = frames[index + 1]
-  two_frames_ahead = frames[index + 2]
   current_frame_number = index + 1
 
   if current_frame_number != LAST_FRAME_NUMBER
@@ -51,7 +47,7 @@ frames.each_with_index do |frame, index|
       frame << if next_frame.size > 1
                  next_frame[1]
                else
-                 two_frames_ahead[0]
+                 frames[index + 2][0]
                end
     elsif spare?(frame)
       frame << next_frame[0]
