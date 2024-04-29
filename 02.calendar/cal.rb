@@ -6,8 +6,6 @@ require 'date'
 
 DATE_WIDTH = 2
 
-options = {}
-
 opt = ARGV.getopts('m:', 'y:')
 month = opt['m']&.to_i || Date.today.month
 year = opt['y']&.to_i || Date.today.year
