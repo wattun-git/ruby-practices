@@ -15,22 +15,14 @@ end
 score = ARGV[0]
 scores = score.split(',')
 
-shots = []
-scores.each do |s|
-  shots << if s == 'X'
-             MAX_KNOCKED_DOWN_PIN
-           else
-             s.to_i
-           end
-end
+shots = scores.map { |s| s == 'X' ? MAX_KNOCKED_DOWN_PIN : s.to_i }
 
 frames =
   Array.new(10) do |i|
     if i == LAST_FRAME_NUMBER - 1
       shots.slice!(0..-1)
     elsif strike?(shots[0..1])
-      ary = []
-      ary << shots.slice!(0) # 配列として返すようにaryに追加
+      [shots.slice!(0)]
     else
       shots.slice!(0..1)
     end
